@@ -41,6 +41,11 @@ class QueryResponseItem(BaseModel):
 
 @app.post("/search", response_model=List[QueryResponseItem])
 def search(request: QueryRequest):
+    """
+    Perform a similarity search in the Chroma vector database.
+    - `query`: The search query string.
+    - `top_k`: Number of top results to return.
+    """
     try:
         results = query_chroma(
             query=request.query,
