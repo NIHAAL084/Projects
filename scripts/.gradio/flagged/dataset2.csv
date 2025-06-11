@@ -1,0 +1,2 @@
+Ask a question,Upload an Image (Optional),"Upload a Table (CSV, Optional)",RAG Response,timestamp
+How long are the minimum prison sentences for rule breakers?,,,Error during request: 404 Client Error: Not Found for url: http://localhost:5678/webhook-test/ask-faq,2025-06-11 19:36:53.639227

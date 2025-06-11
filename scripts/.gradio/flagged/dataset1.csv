@@ -1,0 +1,67 @@
+Ask a question,RAG Response,timestamp
+Which enemy types wield an AK-47?,"'Score: 0.658
+Source: C:\Users\nihaa\Documents\Projects\rag-chatbot-project\data\sample-documents\docs_part1.pdf
+Content:
+Document 0 (Source: https://enterthegungeon.fandom.com/wiki/Bullet_Kin)
+Bullet Kin
+Bullet Kin are one of the most common enemies. They slowly walk towards the player, occasionally
+firing a single bullet. They can flip tables and use them as cover. They will also deal contact damage
+if the player touches them.
+Occasionally, Bullet Kin will have assault rifles, in which case they will rapidly fire 8 bullets towards
+the player before reloading. When an assault rifle wielding bullet kin appears, the
+
+---
+
+Score: 0.709
+Source: C:\Users\nihaa\Documents\Projects\rag-chatbot-project\data\sample-documents\docs_part1.pdf
+Content:
+They fire 4 bullets in a row. If the player moves out of sight from one then the Veteran will pause his
+attack and then fire the remaining bullets once he has caught up.
+Bandana Bullet Kin
+Bandana Bullet Kin behave like regular Bullet Kin, but their fire rate is heavily increased. Bandana
+Bullet Kin also have a higher magazine size than Bullet Kin that wield AK-47s, making them more
+relentless.
+Trivia
+Bandana Bullet Kin wield Machine Pistols.
+Tanker
+Tankers behave like regular Bullet Kin, but ha
+
+---
+
+Score: 0.731
+Source: C:\Users\nihaa\Documents\Projects\rag-chatbot-project\data\sample-documents\docs_part1.pdf
+Content:
+Minecarts within the room, they will take priority by walking towards them to ride in.
+Trivia
+Bullet Kin wield Magnums. Assault-rifle wielding Bullet Kin wield AK-47s.
+Incapacitated Bullet Kin can be found in the Oublilette and Cannon's boss room.
+In the Oubliette and the boss fight against Agunim, some room props resemble Bullet Kin poking out
+from inside barrels. This is likely a visual joke on a bullet inside a gun barrel.
+In the Portuguese translation of the game, they are known as ""Balùncul
+
+---
+
+Score: 0.790
+Source: C:\Users\nihaa\Documents\Projects\rag-chatbot-project\data\sample-documents\docs_part1.pdf
+Content:
+from the playeroften leading them directly into the path of dangerand despawn after a short time,
+with the promise of valuable loot if they are killed.
+Confirmed
+Confirmed are mysterious cloaked Bullet Kin. They stroll towards the player, occasionally stopping
+to fire four slithering lines of bullets at the player from under their hoods.
+Confirmed do not appear in specific room layouts. Instead, they have a small chance to replace an
+enemy in any room. Only one Confirmed can appear on each floor
+
+---
+
+Score: 0.856
+Source: C:\Users\nihaa\Documents\Projects\rag-chatbot-project\data\sample-documents\docs_part1.pdf
+Content:
+Trivia
+Fallen Bullet Kin wield Pitchforks.
+The sounds that Fallen Bullet Kin make are lower pitched versions of regular Bullet Kin.
+These enemies can also be spawned by Lament Configurum.
+A portrait of a Fallen Bullet Kin can be seen in the Abbey of the True Gun.
+In the Portuguese translation of the game, they are known as ""Ex-Balùnculo"" (Ex-Bullet Kin), so in
+that version of the game, it is implied that they are no longer a type of bullet kin, this transformation
+may have happened through their",2025-06-11 12:16:03.620957

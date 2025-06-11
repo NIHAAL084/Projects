@@ -1,0 +1,582 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/ask-faq",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "data",
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        340,
+        20
+      ],
+      "id": "1dacde59-30a2-4524-b927-15f6a1002d0f",
+      "name": "Webhook",
+      "webhookId": "e21fecfe-66a6-4581-8cf2-872036b0feac"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Searches relevant documents in the Chroma vector DB for a given query.",
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/search",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "top_k",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        260
+      ],
+      "id": "02e64dd0-15d7-4f04-ad68-8d978be4c199",
+      "name": "Knowledge_base"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1720,
+        20
+      ],
+      "id": "7a00c8eb-931b-4c89-b2a5-b0c5af008cde",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        900,
+        160
+      ],
+      "id": "bb632c78-a46a-4aed-bb6c-f3d9b9ee79e7",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        920,
+        360
+      ],
+      "id": "cce99c52-6861-49b6-aa15-02f5465cccd2",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e763a78f-0241-4768-9ea3-8c34e1121e09",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "79c4edbd-d191-4e33-a08e-ab2094ba02ab",
+              "name": "query",
+              "value": "={{ $json.body.query }}",
+              "type": "string"
+            },
+            {
+              "id": "4763716d-a23a-473f-85aa-113964f1ebc0",
+              "name": "image_base64",
+              "value": "={{ $json.body.image_base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "ba9205c4-bb16-4fcc-a929-c5ad5a5bd786",
+              "name": "table_csv",
+              "value": "={{ $json.body.table_csv }}",
+              "type": "string"
+            },
+            {
+              "id": "eb79f0b9-5ebf-4415-bc83-0731e33bd797",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        20
+      ],
+      "id": "3703d061-d510-40da-ab81-65ec11c0683f",
+      "name": "extract fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "12989341-03e8-423a-b1c4-8c4d1fdfb8a6",
+              "leftValue": "={{$json[\"table_csv\"]}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        740,
+        100
+      ],
+      "id": "a3c14e52-48a6-4206-8f47-44ccef0b2c1b",
+      "name": "if_table"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7364e9b5-9bfb-4270-8a95-890adf140d02",
+              "leftValue": "={{$json[\"image_base64\"]}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        260
+      ],
+      "id": "415814ab-ed81-4415-90fa-57fc1a94b327",
+      "name": "If_image"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab CSV\nconst csv = $json[\"table_csv\"];\nif (!csv || typeof csv !== \"string\") {\n  return [{ json: { table_stats: {} } }];\n}\n\n// 2. Parse into lines & cells\nconst lines = csv.split(\"\\n\").filter(l => l.trim());\nconst headers = lines[0].split(\",\");\nconst rows = lines.slice(1).map(l => l.split(\",\"));\n\n// 3. Build columns array-of-arrays\nconst columns = headers.map((_, i) => rows.map(r => r[i]?.trim() ?? \"\"));\n\n// 4. Compute stats per column\nconst stats = {};\n\nfor (let i = 0; i < headers.length; i++) {\n  const name = headers[i];\n  const col = columns[i];\n\n  // Try parse all values as numbers\n  const nums = col.map(v => parseFloat(v)).filter(v => !isNaN(v));\n  const isNumeric = nums.length === col.length;\n\n  if (isNumeric) {\n    // Numeric stats\n    const count = nums.length;\n    const sum = nums.reduce((a,b) => a + b, 0);\n    const mean = sum / count;\n    const min = Math.min(...nums);\n    const max = Math.max(...nums);\n    const zeros = nums.filter(v => v === 0).length;\n    // standard deviation\n    const variance =\n      nums.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / count;\n    const std = Math.sqrt(variance);\n\n    stats[name] = {\n      type: \"numeric\",\n      count,\n      mean,\n      min,\n      max,\n      std,\n      zeros\n    };\n  } else {\n    // Categorical stats\n    const freq = {};\n    col.forEach(v => {\n      const key = v || \"<empty>\";\n      freq[key] = (freq[key] || 0) + 1;\n    });\n    const distinct = Object.keys(freq).length;\n    // sort by frequency\n    const sorted = Object.entries(freq).sort(([,a], [,b]) => b - a);\n    const [mostVal, mostCount] = sorted[0];\n    const [leastVal, leastCount] = sorted[sorted.length - 1];\n\n    stats[name] = {\n      type: \"categorical\",\n      distinct,\n      most_frequent: { value: mostVal, count: mostCount },\n      least_frequent: { value: leastVal, count: leastCount }\n    };\n  }\n}\n\n// 5. Return a single-item output with table_stats\nreturn [{ json: { table_stats: stats } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        80
+      ],
+      "id": "25b67286-1900-45be-a9d0-4d37b4578822",
+      "name": "process_table"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert the base64 string into binary buffer\nconst b64 = $json[\"image_base64\"];\nconst data = Buffer.from(b64, \"base64\");\nreturn [{\n  binary: {\n    image: {\n      data: data.toString(\"base64\"), // n8n expects base64 in binary.data\n      mimeType: \"image/png\"\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        240
+      ],
+      "id": "d163b548-5ff4-4c12-af87-75c5ca2e26dc",
+      "name": "convert_image_binary"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c6df1da3-2032-4ed3-baf0-0df5a3d49c74",
+              "name": "image_context",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1560,
+        240
+      ],
+      "id": "dd05ed26-c43b-4d9a-a952-2c4e7cbee3cb",
+      "name": "image_content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json[\"query\"]}}\n\n{{ $json[\"table_stats\"] \n    ? `Table Statistics:\n${Object.entries($json[\"table_stats\"]).map(\n      ([col, stats]) => {\n        if (stats.type === \"numeric\") {\n          return `• ${col} (numeric): count=${stats.count}, mean=${stats.mean.toFixed(2)}, min=${stats.min}, max=${stats.max}, std=${stats.std.toFixed(2)}, zeros=${stats.zeros}`;\n        } else {\n          return `• ${col} (categorical): distinct=${stats.distinct}, most_frequent=${stats.most_frequent.value}(${stats.most_frequent.count}), least_frequent=${stats.least_frequent.value}(${stats.least_frequent.count})`;\n        }\n      }\n    ).join(\"\\n\")}`\n    : \"\"\n}}\n\n{{ $json[\"image_context\"] \n    ? `Context extracted from image:\n${$json[\"image_context\"]}`\n    : \"\"\n}}\n\nPlease use the **Knowledge_base** tool to retrieve relevant context before answering. \nAnswer **only** from the retrieved document context, attribute sources where possible, and if nothing is found return the exact Fallback Message.",
+        "options": {
+          "systemMessage": "You are a helpful, honest, and responsible AI assistant built to answer user questions based on the context provided from documents retrieved using the Knowledge_base tool.\n\nTool Instructions:\n- Always use the tool named Knowledge_base to search for relevant context before answering a question.\n- Tool description: Searches relevant documents in the Chroma vector DB for a given query.\n- If no relevant information is returned from the Knowledge_base tool, do not attempt to answer based on prior knowledge. Instead, respond with the fallback message provided below.\n\nYour role:\n- Provide accurate, concise, and ethically responsible answers grounded only in the context retrieved using the Knowledge_base tool.\n- Attribute any information used to the original document source where possible.\n- Be transparent, avoid guessing, and remain user-focused in all responses.\n- Always reflect Altibbe's values: integrity, empathy, humility, diligence, and wisdom.\n\nFallback Message (when no relevant information is found):\n\"I’m sorry, but I don’t have enough information on that topic right now. Could you try rephrasing your question, or let me know if you’d like me to connect you with our support team for more details?\"\n\nExample Queries and Answers:\nQ: Which enemy types wield an AK-47?  \nA: Assault-rifle wielding Bullet and Tankers wield AK-47s.\n\nQ: What makes jammed enemies different?  \nA: Jammed Keybullet Kin drop 2 keys instead of 1, jammed Chance Kins have a chance to drop twice the loot, and jammed red-Caped Bullet Kin deal contact damage. Additionally, Jammed Keybullet Kin Jammed variations run faster and will take less time to teleport away from the player if they are not destroyed quickly.\n\nQ: What monsters are encountered in this journey?  \nA: Ropers, kobolds, kobold inventors, fire giants, and fire giant dreadnoughts.\n\nQ: What is the policy on Tai Chi?  \nA: In order to calm down the passions and stresses currently exhibited in Parliament, the Loony Party would make all M.P’s have half an hour’s compulsory Tai Chi every day.\n\nQ: How much faster is the Tesla A100 compared to the Tesla V100?  \nA: When measured on the SE-ResNeXt101 deep learning architecture, the Tesla A100 was 1.43x faster than the Tesla V100. On the Masked-R-CNN architecture, it was 1.47x faster. On the Transformer (12-layer, WMT14 en-de), it was 1.70x faster.\n\nQ: How long has the narrator been sober for?  \nA: The author had been sober for seven hundred and thirty days.\n\nQ: What is the policy on semi-skimmed milk?  \nA: I’m sorry, but I don’t have enough information on that topic right now. Could you try rephrasing your question, or let me know if you’d like me to connect you with our support team for more details?\n\nQ: What kind of pumps will be given to people to solve inflation?  \nA: I’m sorry, but I don’t have enough information on that topic right now. Could you try rephrasing your question, or let me know if you’d like me to connect you with our support team for more details?\n\nQ: What does the ++ operator do in Gleam?  \nA: I’m sorry, but I don’t have enough information on that topic right now. Could you try rephrasing your question, or let me know if you’d like me to connect you with our support team for more details?\n",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        20
+      ],
+      "id": "614984e0-2f8f-4a55-8cfb-91e31eb73c5f",
+      "name": "FAQ_Agent"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        2440,
+        20
+      ],
+      "id": "eebca969-ae33-40e9-8b58-7a15f586de0a",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fallbackPhrase = \"I’m sorry, but I don’t have enough information\";\n\nconst preferred = items.find(i => !i.json.output.includes(fallbackPhrase)) || items[0];\n\nreturn [{\n  json: {\n    answer: preferred.json.output\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        20
+      ],
+      "id": "73b4d323-32ba-46ef-9b10-962833fc76ae",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Please describe the contents of this image.",
+        "options": {
+          "systemMessage": "You are a helpful vision-language assistant. Given an image, you will perform the following tasks:\n\n1. If the image contains any text, extract all readable text accurately. Do not skip handwriting or small fonts.\n2. If the image contains structured content (e.g., forms, tables, charts), summarize their contents.\n3. If the image is not primarily text-based, describe its contents clearly and concisely.\n4. Highlight anything important, such as labels, titles, keywords, data values, or visual markers.\n\nRespond in plain text. Do not include unnecessary interpretation or assumptions.\n",
+          "maxIterations": 10,
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        240
+      ],
+      "id": "aa4a9798-2c4b-4df2-b2df-710d885142c1",
+      "name": "Analyze_image"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5vl:7b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        440
+      ],
+      "id": "025760c6-f8aa-4783-ac94-94ba78e5b51d",
+      "name": "VLM",
+      "credentials": {
+        "ollamaApi": {
+          "id": "9bSLClOoXXvViHB9",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        260
+      ],
+      "id": "27252c9d-7f79-41d2-a41e-7d0f98c21e8c",
+      "name": "LLM",
+      "credentials": {
+        "ollamaApi": {
+          "id": "9bSLClOoXXvViHB9",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        260
+      ],
+      "id": "541de799-2065-459d-862c-1cba25c23bd7",
+      "name": " Memory",
+      "credentials": {
+        "mongoDb": {
+          "id": "kHh2Lujc4Fmv02oZ",
+          "name": "MongoDB"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "extract fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge_base": {
+      "ai_tool": [
+        [
+          {
+            "node": "FAQ_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract fields": {
+      "main": [
+        [
+          {
+            "node": "If_image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "if_table",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if_table": {
+      "main": [
+        [
+          {
+            "node": "process_table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If_image": {
+      "main": [
+        [
+          {
+            "node": "convert_image_binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "process_table": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "convert_image_binary": {
+      "main": [
+        [
+          {
+            "node": "Analyze_image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "image_content": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "FAQ_Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ_Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze_image": {
+      "main": [
+        [
+          {
+            "node": "image_content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze_image",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "FAQ_Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    " Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "FAQ_Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "22c055bb-4ea8-412e-ac5b-80d3b134e2ee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b57691d1f5c3add2fcdd767de8eecaf9c8f85923022cb1b2be61b5f3cac670a"
+  },
+  "id": "krpo3xJdPbre25tN",
+  "tags": []
+}
