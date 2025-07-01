@@ -2,7 +2,7 @@
 
 &#x20;&#x20;
 
-**rag-chatbot-project** is a locally deployable, Retrieval-Augmented Generation (RAG) FAQ chatbot. It leverages **n8n** orchestration, a **Chroma** vector store, and **Ollama** embeddings/LLMs to deliver accurate, ethically framed answers enriched by text, image, and table context. A built‑in Gradio UI and analytics dashboard provide a seamless user experience and real-time insights.
+**FAQ_Chatbot** is a locally deployable, Retrieval-Augmented Generation (RAG) augmented chatbot. It leverages **n8n** orchestration, a **Chroma** vector store, and **Ollama** embeddings/LLMs to deliver accurate, ethically framed answers enriched by text, image, and table context. A built‑in Gradio UI and analytics dashboard provide a seamless user experience and real-time insights.
 
 ![Workflow Diagram](workflow.png)
 ---
